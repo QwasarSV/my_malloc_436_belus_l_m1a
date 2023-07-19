@@ -3,10 +3,10 @@
 
 #include <main_header.h>
 
-#define _CHUNCK_SIZE_ 64
+#define _CHUNK_SIZE_ 64
 #define _CALL_SIZE_   1024
 
-//readline.h
+extern void* my_mmap(int size);
 
 
 #endif
