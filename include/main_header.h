@@ -10,7 +10,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <pthread.h>
 
+ 
 #include <my_libasm.h>
 #include <my_allocator.h>
 #include <my_linkedlist.h>

@@ -1,39 +1,39 @@
 #include <main_header.h>
 
-chunk_t* create_node(bool used)
+mseg_t* register_node_data(mseg_t* new_node, size_t size, bool isfree, void* ptr)
 {
-    chunk_t* new_node = malloc(sizeof(chunk_t));
-    new_node->used = used;
+    new_node->size_chunk = size;
+    new_node->isfree = isfree;
+    new_node->ptr_cmp = ptr;
     new_node->next = NULL;
-    new_node->head = NULL;
     return new_node;
 }
 
-void insert_at_head(chunk_t** head, chunk_t* chunk_to_insert)
+void insert_at_head(mseg_t** head, mseg_t* mseg_to_insert)
 {
-    chunk_to_insert->next = *head;
-    *head = chunk_to_insert;
+    mseg_to_insert->next = *head;
+    *head = mseg_to_insert;
 }
 
-void print_llist(chunk_t* head)
+void print_llist(mseg_t* head)
 {
-    chunk_t* iterator = head; 
+    mseg_t* iterator = head; 
     printf("printing the llist:\n");
     while (iterator != NULL)
     {
-        printf("%i-",iterator->used);
+        printf("%p-",iterator->ptr_cmp);
         iterator = iterator->next;
     }
     printf("NULL\n");
 }
 
-void free_llist(chunk_t* head)
-{
-    chunk_t* tmp = NULL;
-    while ( head != NULL)
-    {
-        tmp = head;
-        head = head->next;
-        free(tmp);
-    }
-}
+// void free_llist(mseg_t* head)
+// {
+//     mseg_t* tmp = NULL;
+//     while ( head != NULL)
+//     {
+//         tmp = head;
+//         head = head->next;
+//         free(tmp);
+//     }
+// }
