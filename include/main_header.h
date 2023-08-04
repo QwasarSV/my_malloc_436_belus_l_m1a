@@ -12,7 +12,7 @@
 #include <stdarg.h>
 #include <pthread.h>
 
- 
+#include <my_size_class.h>
 #include <my_libasm.h>
 #include <my_allocator.h>
 #include <my_linkedlist.h>
@@ -24,5 +24,7 @@
 #include <my_set.h>
 #include <my_stdio.h>
 #include <my_error_handler.h>
+
+#include <test_fn_header_file.h>
 
 #endif
