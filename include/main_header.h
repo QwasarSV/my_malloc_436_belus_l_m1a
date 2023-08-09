@@ -11,11 +11,10 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <stdint.h>
 
-#include <my_size_class.h>
 #include <my_libasm.h>
-#include <my_allocator.h>
-#include <my_linkedlist.h>
+
 #include <non_standard_header.h>
 #include <my_string.h>
 #include <my_readline.h>
@@ -23,7 +22,16 @@
 #include <my_hash.h>
 #include <my_set.h>
 #include <my_stdio.h>
+
 #include <my_error_handler.h>
+#include <my_size_class.h>
+#include <my_binmap.h>
+#include <my_arena.h>
+#include <my_bitmap.h>
+#include <my_run.h>
+#include <my_tcache.h>
+#include <my_allocator.h>
+#include <my_linkedlist.h>
 
 #include <test_fn_header_file.h>
 

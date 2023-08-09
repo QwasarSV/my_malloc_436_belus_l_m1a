@@ -6,5 +6,6 @@
 void    init_memory_pool(int pool_size);
 cell_t* allocate_cell();
 void    destroy_memory_pool();
+radix_t* fetch_node();
 
 #endif

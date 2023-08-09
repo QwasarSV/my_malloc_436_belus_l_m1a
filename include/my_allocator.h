@@ -19,8 +19,8 @@ struct mem_segment
 typedef struct mem_segment mseg_t;
 #endif
 
-extern mseg_t* memory_pool;
-extern mseg_t* free_chunck;
+// extern mseg_t* memory_pool;
+// extern mseg_t* free_chunck;
 
 extern void* my_mmap(int size);
 

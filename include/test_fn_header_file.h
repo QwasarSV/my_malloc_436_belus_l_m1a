@@ -3,6 +3,13 @@
 
 #include <main_header.h>
 
-void test_class_retrieval_system(int size_req);
+void    test_class_retrieval_system(int size_req);
+int     test_binmap(int size_req);
+int     test_bitmap();
+int     test_routine(void);
+int     loop_test_addr_retrieval();
+int     test_addr_retrieval(int spacing, int class);
+void    test_for_loop();
+void    test_for_loop_02();
 
 #endif

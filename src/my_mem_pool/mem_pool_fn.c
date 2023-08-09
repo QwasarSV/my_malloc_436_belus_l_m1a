@@ -1,37 +1,32 @@
-// #include <main_header.h>
+#include <main_header.h>
 
-// mseg_t* memory_segment;
-// mseg_t* free_chunck;
+radix_t* memory_segment;
+radix_t* free_chunck = NULL;
 
-// void init_memory_segment(int segment_size)
-// {
-//     memory_segment = (mseg_t*)my_mmap(segment_size);
-//     if (!memory_segment)
-//     {
-//         write(STDERR_FILENO, MEM_segment_ALLOC, SIZE_MSG_ALLOC);
-//         exit(EXIT_FAILURE);
-//     }
-//     for (int index = 0; index < segment_size - 1; index++)
-//     {
-//         memory_segment[index].next = &memory_segment[index + 1];
-//     }
-//     memory_segment[segment_size - 1].next = NULL;
+void init_memory_segment(void* mem_seg, size_t elem_cnt)
+{
+    memory_segment = (radix_t*)mem_seg;
+    for (int index = 0; index < elem_cnt - 1; index++)
+    {
+        memory_segment[index].right = &memory_segment[index + 1];
+    }
+    memory_segment[elem_cnt - 1].right = NULL;
 
-//     free_chunck = &memory_segment[0];
-// }
+    free_chunck = &memory_segment[0];
+}
 
-// mseg_t* allocate_cell()
-// {
-//     if (!free_chunck)
-//     {
-//         write(STDERR_FILENO, MEM_segment_SPACE, SIZE_MSG_SPACE);
-//         return NULL;
-//     }
+radix_t* allocate_node()
+{
+    if (!free_chunck)
+    {
+        // write(STDERR_FILENO, MEM_segment_SPACE, SIZE_MSG_SPACE);
+        return NULL;
+    }
 
-//     mseg_t* cell = free_chunck;
-//     free_chunck = free_chunck->next;
-//     return cell;
-// }
+    radix_t* node = free_chunck;
+    free_chunck = free_chunck->right;
+    return node;
+}
 
 // void destroy_memory_segment()
 // {
