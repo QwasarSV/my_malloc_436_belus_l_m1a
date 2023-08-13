@@ -3,25 +3,32 @@
 
 #include <main_header.h>
 
-#define _CHUNK_SIZE_ 64
-#define _CALL_SIZE_  256
-
-#ifndef _MEM_SEGMENT_S
-#define _MEM_SEGMENT_S
-struct mem_segment
+#ifndef _NODE_S_
+#define _NODE_S_
+struct node_s
 {
-    void*  ptr_cmp;
-    bool   isfree;
-    pthread_t tid; 
-    struct mem_segment* next;
-    size_t size_chunk;
+    arena_t* arena;
+    struct node_s* next;
 };
-typedef struct mem_segment mseg_t;
+typedef struct node_s node_t;
 #endif
 
-// extern mseg_t* memory_pool;
-// extern mseg_t* free_chunck;
+#ifndef _GLOBAL_POOL_
+#define _GLOBAL_POOL_
+struct global_pool
+{
+    node_t* arenas_list;
+    radix_t* root;
+};
+typedef struct global_pool g_pool_t;
+#endif
+
+extern g_pool_t* handler;
 
 extern void* my_mmap(int size);
 
+void        create_mem_handler(void);
+void*       req_mem_for_handler();
+size_t      handler_size_req();
+arena_t*    find_arena();
 #endif

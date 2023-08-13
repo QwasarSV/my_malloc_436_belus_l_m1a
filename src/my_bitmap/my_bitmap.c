@@ -69,6 +69,20 @@ int find_free_slot(run_t* run, size_t size)
     return -1;
 }
 
+bool is_bitmap_full(run_t* run)
+{
+    int index = 0;
+    while (index < BITMAP_SIZE)
+    {
+        if (run->bmp[index].data != 0xFF)
+        {
+            return false;
+        }
+        index += 1;
+    }
+    return true;
+}
+
 int test_bitmap()
 {
     bmp_t bmp = {0};

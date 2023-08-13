@@ -3,8 +3,8 @@
 
 #include <main_header.h>
 
-void    init_memory_pool(int pool_size);
-cell_t* allocate_cell();
+void init_memory_segment(void* mem_seg, size_t elem_cnt);
+radix_t* allocate_node();
 void    destroy_memory_pool();
 radix_t* fetch_node();
 

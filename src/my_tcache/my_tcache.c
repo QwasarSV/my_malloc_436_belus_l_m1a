@@ -1,12 +1,12 @@
 #include <main_header.h>
 
-arena_t* arena;
-int arena_size = 0;
+// arena_t* arena;
+// int arena_size = 0;
 
 void insert_run_on_radix_tree(void* addr)
 {
     printf("inserting address into radix tree : %p\n", addr);
-    insert(&arena->root, addr);
+    insert(&handler->root, addr);
 }
 
 int calc_tcache_size(void)
@@ -31,7 +31,7 @@ int calc_tcache_size(void)
 }
 
 
-void create_tcache(void* addr)
+void create_tcache(arena_t* arena, void* addr)
 {
     int index = 0;
     int jndex = 0;
@@ -41,6 +41,7 @@ void create_tcache(void* addr)
         while (size_class[index][jndex] != 0)
         {
             arena->_tcache_[index][jndex].address = addr;
+            free_size_class(index, jndex, &arena->binmap);
             run_size = size_class[index][jndex] * (BITMAP_SIZE * 8) + sizeof(run_t);
             run_t* run = addr;
             run->byte = addr + BITMAP_SIZE + 1;
@@ -52,7 +53,7 @@ void create_tcache(void* addr)
     }
 }
 
-void maps_run_on_radix_tree()
+void maps_run_on_radix_tree(arena_t* arena)
 {
     int index = 0;
     int jndex = 0;
@@ -74,15 +75,33 @@ void maps_run_on_radix_tree()
     printf("MAPPING ADDRESS END...\n\n\n:");
 }
 
-void new_run_batch(void)
-{   
-    int size_arena = sizeof(arena_t);
-    arena_size = calc_tcache_size();
-    char* memory = my_mmap(arena_size);
-    void* run_start = memory + size_arena + 1;
-    arena = (arena_t*)memory;
-    create_tcache(run_start);
-    maps_run_on_radix_tree();
-    loop_test_addr_retrieval();
+size_t arena_size_req()
+{
+    size_t size_arena_s    = sizeof(arena_t);
+    size_t tcache_size     = calc_tcache_size();
+    size_t size_req        = size_arena_s + tcache_size;
+    return size_req;
+}
+ 
+
+
+void create_arena(void* ptr)
+{
+    size_t   size_arena_s               = sizeof(arena_t);
+    handler->arenas_list->arena         = (arena_t*)ptr;
+    handler->arenas_list->arena->tid    = (unsigned long)pthread_self();
+    void*    run_start                  = ptr + size_arena_s + 1;
+    create_tcache(handler->arenas_list->arena, run_start);
+    maps_run_on_radix_tree(handler->arenas_list->arena);
+    // // test function:
+    loop_test_addr_retrieval(handler->arenas_list->arena);
+    // // end test function
 }
 
+// arena_t* set_arena(void)
+// {
+//     size_t size_req = arena_size_req();
+//     char* memory = my_mmap(size_req);
+//     // arena_t* arena = create_arena(memory);
+//     return arena;
+// }

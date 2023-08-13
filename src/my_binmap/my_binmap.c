@@ -62,3 +62,4 @@ int test_binmap(int size_req)
 
     return EXIT_SUCCESS;
 }
+

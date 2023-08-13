@@ -23,7 +23,7 @@ int test_routine(void)
     return EXIT_SUCCESS;
 }
 
-int loop_test_addr_retrieval()
+int loop_test_addr_retrieval(arena_t* arena)
 {
     int index = 0;
     int jndex = 0;
@@ -35,7 +35,7 @@ int loop_test_addr_retrieval()
     {
         while (size_class[index][jndex] != 0)
         {
-            count += test_addr_retrieval(index, jndex);
+            count += test_addr_retrieval(arena, index, jndex);
             jndex += 1;
             total_test += 1;
         }
@@ -45,9 +45,10 @@ int loop_test_addr_retrieval()
     count = total_test - count;
     printf("Test passed : %i/%i\n", count, total_test);
     printf("TESTING RADIX TREE END...\n\n\n");
+    return EXIT_SUCCESS;
 }
 
-int test_addr_retrieval(int spacing, int class)
+int test_addr_retrieval(arena_t* arena, int spacing, int class)
 {
     int mult = 1044;
     int mod = 0;
@@ -58,7 +59,7 @@ int test_addr_retrieval(int spacing, int class)
     {
     mod = index * mult;
     printf("Looking start of : %p\n", (void*)addr + mod);
-    void* test_run_start = find_run_start(arena->root, (void*)addr + mod);
+    void* test_run_start = find_run_start(handler->root, (void*)addr + mod);
     printf("Found run start at: %p/%p\n\n", test_run_start, arena->_tcache_[spacing][class].address);
     index += 1;
         if ((uintptr_t)test_run_start != (uintptr_t)addr)
@@ -81,7 +82,7 @@ void test_for_loop()
     printf("total used size is :%i\n", size_tracker);
     my_strcpy(dest_01, src);
     printf("%s\n", dest_01);
-    void* run_start = find_run_start(arena->root, dest_01);
+    void* run_start = find_run_start(handler->root, dest_01);
     if (run_start) {
         printf("The run start for address %p is %p\n", dest_01, run_start);
     } else {
@@ -99,7 +100,7 @@ void test_for_loop_02()
     printf("total used size is :%i\n", size_tracker);
     my_strcpy(dest_01, src);
     printf("%s\n", dest_01);
-    void* run_start = find_run_start(arena->root, (void*)dest_01);
+    void* run_start = find_run_start(handler->root, (void*)dest_01);
     if (run_start) {
         printf("The run start for address %p is %p\n", dest_01, run_start);
     } else {

@@ -32,17 +32,16 @@ typedef struct radix_node_s radix_t;
 #define _ARENA_S_
 struct _arena_s_
 {
-    bool shared;
+    unsigned long tid;
     addr_t _tcache_[SPACING_COUNT -1][9];
-    radix_t* root;
-    binmap_t* binmap;
+    binmap_t binmap;
     bool (*is_free)(int, int, struct binmap_s*);
     int  (*mark_or_free)(int, int, struct binmap_s*);
 };
 typedef struct _arena_s_ arena_t;
 #endif
 
-extern arena_t* arena;
-extern int arena_size;
+// extern arena_t* arena;
+// extern int arena_size;
 
 #endif

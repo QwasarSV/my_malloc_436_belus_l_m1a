@@ -91,8 +91,8 @@ radix_t* next_bit(radix_t* root, bool true_false)
 void* find_run_start(radix_t* root, void *ptr)
 {
     uintptr_t address = (uintptr_t)ptr;
-    uintptr_t highest_last_address = NULL;
-    uintptr_t current_address = NULL;
+    uintptr_t highest_last_address = (uintptr_t)NULL;
+    uintptr_t current_address = (uintptr_t)NULL;
     int bit_index = sizeof(void*) * 8 - 1; 
     radix_t* tmp = NULL;
     while (bit_index >= 0)

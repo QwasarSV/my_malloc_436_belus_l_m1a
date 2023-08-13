@@ -3,7 +3,7 @@
 
 #include <main_header.h>
 
-int my_free(void* ptr);
-void* req_slot(size_t size);
+int     my_free(void* ptr);
+void*   req_slot(size_t size);
 
 #endif
