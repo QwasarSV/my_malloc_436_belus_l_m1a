@@ -83,9 +83,12 @@ void test_for_loop()
     my_strcpy(dest_01, src);
     printf("%s\n", dest_01);
     void* run_start = find_run_start(handler->root, dest_01);
-    if (run_start) {
+    if (run_start)
+    {
         printf("The run start for address %p is %p\n", dest_01, run_start);
-    } else {
+    } 
+    else
+    {
         printf("No run start found for address %p\n", dest_01);
     }
 }
@@ -93,7 +96,7 @@ void test_for_loop()
 void test_for_loop_02()
 {
     int size_tracker = 0;
-    char* src = "hello this is a string probleme or maybe a struct issue 123456789";
+    char* src = "hello";
     size_tracker += my_strlen(src) + 1;
     printf("string size is : %i\n", my_strlen(src)+1);
     char* dest_01 = req_slot(my_strlen(src) + 1);
@@ -101,9 +104,12 @@ void test_for_loop_02()
     my_strcpy(dest_01, src);
     printf("%s\n", dest_01);
     void* run_start = find_run_start(handler->root, (void*)dest_01);
-    if (run_start) {
+    if (run_start)
+    {
         printf("The run start for address %p is %p\n", dest_01, run_start);
-    } else {
+    }
+    else
+    {
         printf("No run start found for address %p\n", dest_01);
     }
 }

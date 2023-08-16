@@ -10,6 +10,8 @@ void        insert(radix_t** root, void *ptr);
 void*       find_run_start(radix_t * root, void *ptr);
 radix_t*    fetch_node();
 
-void        insert_arena_at_head(node_t** head,node_t* node_to_insert);
+void        insert_at_head(node_t** head, node_t* node_to_insert);
+void        insert_run_at_head(run_t** head, run_t* run_to_insert);
 node_t*     create_arena_node(arena_t* arena);
+
 #endif

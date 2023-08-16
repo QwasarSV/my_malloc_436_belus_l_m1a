@@ -12,13 +12,13 @@ int main(void)
     create_mem_handler();
 
     int index = 0;
-    while (index < 10)
-    {
-        test_for_loop();
-        index += 1;
-    }
+    // while (index < 276)
+    // {
+    //     test_for_loop();
+    //     index += 1;
+    // }
     printf("\n");
-    while (index < 20)
+    while (index < 290)
     {
         test_for_loop_02();
         index += 1;

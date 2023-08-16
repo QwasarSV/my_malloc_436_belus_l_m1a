@@ -19,5 +19,4 @@ typedef struct bitmap bmp_t;
 void    set_bit(bmp_t* bmp, int index, int value);
 void    clear_bit(bmp_t* bmp, int index);
 int     get_bit(bmp_t bmp, int index);
-
 #endif

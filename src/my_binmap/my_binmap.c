@@ -33,7 +33,7 @@ int free_size_class(int spacing, int size_class_index, binmap_t* binmap)
     return EXIT_SUCCESS;
 }
 
-binmap_t create_binmap()
+binmap_t create_binmap(bool boolean)
 {
     binmap_t binmap = {.data = {true}};
     return binmap;
@@ -49,7 +49,7 @@ int test_binmap(int size_req)
     printf("Class index : %i\n", class_index);
 
     printf("creating binmap");
-    binmap_t binmap = create_binmap();
+    binmap_t binmap = create_binmap(true);
     printf("Requesting bin map for size_class %i\n", size_class[spacing_index][class_index]);
 
     printf("Marking class\n");

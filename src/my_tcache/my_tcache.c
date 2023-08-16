@@ -2,7 +2,7 @@
 
 // arena_t* arena;
 // int arena_size = 0;
-
+size_t mem_call_size;
 void insert_run_on_radix_tree(void* addr)
 {
     printf("inserting address into radix tree : %p\n", addr);
@@ -27,6 +27,7 @@ int calc_tcache_size(void)
         jndex = 0;
         index += 1;
     }
+    mem_call_size = total_size;
     return total_size + 1;
 }
 
@@ -82,8 +83,6 @@ size_t arena_size_req()
     size_t size_req        = size_arena_s + tcache_size;
     return size_req;
 }
- 
-
 
 void create_arena(void* ptr)
 {
