@@ -30,17 +30,17 @@ arena_t* find_binmap(void* ptr)
 int my_free(void* ptr)
 {
     run_t* run = find_run_start(handler->root, (void*)ptr);
-    printf("The run start for address %p is %p\n", ptr, run);
+    // printf("The run start for address %p is %p\n", ptr, run);
     void* run_start = (void*)run + sizeof(run_t);
-    printf("Run is size_class: %i \n", run->size_class);
+    // printf("Run is size_class: %i \n", run->size_class);
     int slot = ((uintptr_t)ptr - (uintptr_t)run_start)/run->size_class;
-    printf("Freeing slot N: %i \n", slot);
+    // printf("Freeing slot N: %i \n", slot);
     clear_in_bmp(run, slot);
     run->last_known_free_position = slot;
     arena_t* arena = find_binmap((void*)run);
-    printf("Run TID is: %lu \n", arena->tid);
+    // printf("Run TID is: %lu \n", arena->tid);
     int spacing = nearest_spacing_index(run->size_class);
-    printf("Run is spacing: %i \n", spacing);
+    // printf("Run is spacing: %i \n", spacing);
     int class_index = get_size_class_index(spacing, run->size_class);
     free_size_class(spacing, class_index, &arena->binmap);
     return EXIT_SUCCESS;
@@ -141,26 +141,36 @@ run_t* get_or_create_run(arena_t* arena, int spacing, int class)
     return run;
 }
 
-void* req_slot(size_t size)
+
+run_t* find_run(arena_t* arena, int spacing, int class)
 {
     run_t* run = NULL;
-    arena_t* arena = find_arena();
-    int spacing = nearest_spacing_index(size);
-    int class = get_size_class_index(spacing, size);
-    int size_req = size_class[spacing][class];
-    void* ptr = NULL;
     if (!is_size_class_free(spacing, class, &arena->binmap))
     {
         run = get_or_create_run(arena, spacing, class);
     }
     else
     {
-        printf("User realized a request size of %zu... found spacing N%i, class_index N%i\n", size, spacing, class);
-        printf("Matching size class is : %i\n", size_req);
         run = (run_t*)arena->_tcache_[spacing][class].address;
-        printf("Selected run adress is : %p\n", run);
     }
+    return run;
+}
+
+
+void* req_slot(size_t size)
+{
+    run_t* run = NULL;
+    arena_t* arena = find_arena();
+    int spacing = nearest_spacing_index(size);
+    int class = get_size_class_index(spacing, size);
+    // printf("User realized a request size of %zu... found spacing N%i, class_index N%i\n", size, spacing, class);
+    run = find_run(arena, spacing, class);
     
+    int size_req = size_class[spacing][class];
+    void* ptr = NULL;
+    // printf("Matching size class is : %i\n", size_req);
+    // printf("Selected run adress is : %p\n", run);
+
     int slot = find_free_slot(run, size_req);
     if (slot == -1)
     {
@@ -168,11 +178,26 @@ void* req_slot(size_t size)
         ptr = req_slot(size);
         return (void*)ptr;       
     }
-    printf("Free slot index is : %i\n", slot);
+    // printf("Free slot index is : %i\n", slot);
     set_in_bmp(run, slot, true);
     int offset = slot * size_req;
     int run_size = sizeof(run_t);
     ptr = (void*)run + run_size + offset;
-    printf("Total offset is : %i\n", run_size + offset);
+    // printf("Total offset is : %i\n", run_size + offset);
+    return (void*)ptr;
+}
+
+
+void* my_malloc(size_t size)
+{
+    void* ptr = NULL;
+    if (handler == NULL)
+    {
+        create_mem_handler();
+    }
+    else
+    {
+        ptr = req_slot(size);
+    }
     return (void*)ptr;
 }

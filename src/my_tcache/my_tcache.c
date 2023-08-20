@@ -5,7 +5,7 @@
 size_t mem_call_size;
 void insert_run_on_radix_tree(void* addr)
 {
-    printf("inserting address into radix tree : %p\n", addr);
+    // printf("inserting address into radix tree : %p\n", addr);
     insert(&handler->root, addr);
 }
 
@@ -61,20 +61,20 @@ void maps_run_on_radix_tree(arena_t* arena)
     int jndex = 0;
     void* addr = NULL;
     insert_run_on_radix_tree((void*)NULL);
-    printf("MAPPING ADDRESS\n\n\n:");
+    // printf("MAPPING ADDRESS\n\n\n:");
     while (index < SPACING_COUNT -1)
     {
         while (size_class[index][jndex] != 0)
         {
             addr = arena->_tcache_[index][jndex].address;
-            printf("insert sizeclass :%i  on addr : %p\n", size_class[index][jndex], arena->_tcache_[index][jndex].address);
+            // printf("insert sizeclass :%i  on addr : %p\n", size_class[index][jndex], arena->_tcache_[index][jndex].address);
             insert_run_on_radix_tree((void*)addr);
             jndex += 1;
         }
         jndex = 0;
         index += 1;
     }
-    printf("MAPPING ADDRESS END...\n\n\n:");
+    // printf("MAPPING ADDRESS END...\n\n\n:");
 }
 
 size_t arena_size_req()
@@ -94,7 +94,7 @@ void create_arena(void* ptr)
     create_tcache(handler->arenas_list->arena, run_start);
     maps_run_on_radix_tree(handler->arenas_list->arena);
     // // test function:
-    loop_test_addr_retrieval(handler->arenas_list->arena);
+    // loop_test_addr_retrieval(handler->arenas_list->arena);
     // // end test function
 }
 
