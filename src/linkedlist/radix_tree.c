@@ -87,6 +87,18 @@ radix_t* next_bit(radix_t* root, bool true_false)
     }
 }
 
+uintptr_t validate_run(uintptr_t run_address, uintptr_t address, uintptr_t highest_last_address)
+{
+    void* ptr = (void*)run_address;
+    run_t* run = (run_t*)ptr;
+    int size_run = sizeof(run_t) + run->size_class * 8 * BITMAP_SIZE;
+    uintptr_t run_end = (uintptr_t)ptr + size_run;
+    if (address < run_end)
+    {
+        return run_address;
+    }
+    return highest_last_address;
+}
 
 void* find_run_start(radix_t* root, void *ptr)
 {
@@ -109,7 +121,7 @@ void* find_run_start(radix_t* root, void *ptr)
         }
         if (current_address > highest_last_address && current_address < address)
         {
-            highest_last_address = current_address;
+            highest_last_address = validate_run(current_address, address, highest_last_address);
         }
         bit_index += 1;
     }

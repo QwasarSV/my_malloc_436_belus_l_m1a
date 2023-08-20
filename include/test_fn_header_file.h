@@ -10,6 +10,6 @@ int     test_routine(void);
 int     loop_test_addr_retrieval(arena_t* arena);
 int     test_addr_retrieval(arena_t* arena, int spacing, int class);
 void    test_for_loop();
-void    test_for_loop_02();
+void*   test_for_loop_02();
 
 #endif

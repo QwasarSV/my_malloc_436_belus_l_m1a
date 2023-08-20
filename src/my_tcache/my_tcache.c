@@ -45,6 +45,7 @@ void create_tcache(arena_t* arena, void* addr)
             free_size_class(index, jndex, &arena->binmap);
             run_size = size_class[index][jndex] * (BITMAP_SIZE * 8) + sizeof(run_t);
             run_t* run = addr;
+            run->size_class = size_class[index][jndex];
             run->byte = addr + BITMAP_SIZE + 1;
             addr += run_size;
             jndex += 1;

@@ -1,11 +1,48 @@
 #include <main_header.h>
 
+// not good to recode//
+arena_t* find_binmap(void* ptr)
+{
+    uintptr_t address = (uintptr_t)ptr;
+    uintptr_t current_address = 0;
+    uintptr_t highest_last_address = 0;
+    arena_t*  arena = NULL; 
+    node_t*   iterator = handler->arenas_list;
+
+    while (iterator != NULL)
+    {
+        current_address = (uintptr_t)iterator->arena->_tcache_[0][0].address;
+        if (current_address == ptr)
+        {
+            return iterator->arena;;
+        }
+        if (current_address > highest_last_address
+        &&  current_address < address)
+        {
+            highest_last_address = current_address;
+            arena = iterator->arena;
+        }
+        iterator = iterator->next;
+    }
+    return arena;
+}
+
 int my_free(void* ptr)
 {
-    int slot = 0;
-    run_t* run;
+    run_t* run = find_run_start(handler->root, (void*)ptr);
+    printf("The run start for address %p is %p\n", ptr, run);
+    void* run_start = (void*)run + sizeof(run_t);
+    printf("Run is size_class: %i \n", run->size_class);
+    int slot = ((uintptr_t)ptr - (uintptr_t)run_start)/run->size_class;
+    printf("Freeing slot N: %i \n", slot);
     clear_in_bmp(run, slot);
     run->last_known_free_position = slot;
+    arena_t* arena = find_binmap((void*)run);
+    printf("Run TID is: %lu \n", arena->tid);
+    int spacing = nearest_spacing_index(run->size_class);
+    printf("Run is spacing: %i \n", spacing);
+    int class_index = get_size_class_index(spacing, run->size_class);
+    free_size_class(spacing, class_index, &arena->binmap);
     return EXIT_SUCCESS;
 }
 
@@ -129,8 +166,7 @@ void* req_slot(size_t size)
     {
         mark_size_class(spacing, class, &arena->binmap);
         ptr = req_slot(size);
-        return (void*)ptr;
-        
+        return (void*)ptr;       
     }
     printf("Free slot index is : %i\n", slot);
     set_in_bmp(run, slot, true);

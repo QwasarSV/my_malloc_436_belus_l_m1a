@@ -29,6 +29,7 @@ int free_size_class(int spacing, int size_class_index, binmap_t* binmap)
         // "ERR_SIZE_CLASS : size_class_does not belong"
         return EXIT_FAILURE;
     }
+    printf("HERE\n");
     binmap->data[spacing][size_class_index] = true;
     return EXIT_SUCCESS;
 }

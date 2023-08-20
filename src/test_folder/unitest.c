@@ -93,7 +93,7 @@ void test_for_loop()
     }
 }
 
-void test_for_loop_02()
+void* test_for_loop_02()
 {
     int size_tracker = 0;
     char* src = "hello";
@@ -112,4 +112,5 @@ void test_for_loop_02()
     {
         printf("No run start found for address %p\n", dest_01);
     }
+    return (void*)dest_01;
 }
