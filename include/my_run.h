@@ -21,7 +21,7 @@ typedef struct _run_s_ run_t;
 void    set_in_bmp(run_t* run, int index, int value);
 void    clear_in_bmp(run_t* run, int index);
 int     get_from_bmp(run_t* run, int index);
-int     find_free_slot(run_t* run, size_t size);
+int     find_free_slot(run_t* run);
 bool    is_bitmap_full(run_t* run);
 void    set_bitmap(run_t* run);
 #endif

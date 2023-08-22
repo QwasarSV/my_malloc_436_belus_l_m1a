@@ -46,7 +46,7 @@ int get_from_bmp(run_t* run, int index)
     return get_bit(run->bmp[bmp_index], bit_index);
 }
 
-int find_free_slot(run_t* run, size_t size)
+int find_free_slot(run_t* run)
 {
     int byte_index = run->last_known_free_position / 8;
     int bit_index = 0;
@@ -92,6 +92,8 @@ void set_bitmap(run_t* run)
         index += 1;
     }
 }
+
+
 
 int test_bitmap()
 {

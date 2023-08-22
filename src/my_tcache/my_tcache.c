@@ -5,7 +5,7 @@
 size_t mem_call_size;
 void insert_run_on_radix_tree(void* addr)
 {
-    // printf("inserting address into radix tree : %p\n", addr);
+    printf("inserting address into radix tree : %p\n", addr);
     insert(&handler->root, addr);
 }
 
@@ -15,6 +15,7 @@ int calc_tcache_size(void)
     int jndex = 0;
     int total_size = 0;
     int run_size = 0;
+    long page_size = sysconf(_SC_PAGESIZE);
     total_size += sizeof(arena_t);
     while (index < SPACING_COUNT -1)
     {
@@ -27,8 +28,8 @@ int calc_tcache_size(void)
         jndex = 0;
         index += 1;
     }
-    mem_call_size = total_size;
-    return total_size + 1;
+    mem_call_size = total_size + (page_size - total_size % page_size);
+    return total_size;
 }
 
 
@@ -61,6 +62,7 @@ void maps_run_on_radix_tree(arena_t* arena)
     int jndex = 0;
     void* addr = NULL;
     insert_run_on_radix_tree((void*)NULL);
+    // insert_run_on_radix_tree((void*)0xFFFFFFFFFFFFFFFF);
     // printf("MAPPING ADDRESS\n\n\n:");
     while (index < SPACING_COUNT -1)
     {

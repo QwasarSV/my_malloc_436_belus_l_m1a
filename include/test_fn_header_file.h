@@ -11,5 +11,6 @@ int     loop_test_addr_retrieval(arena_t* arena);
 int     test_addr_retrieval(arena_t* arena, int spacing, int class);
 void    test_for_loop();
 void*   test_for_loop_02();
-
+int     test_monocore_string();
+int     test_monocore_large_class();
 #endif
