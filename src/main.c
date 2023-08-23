@@ -6,7 +6,7 @@
 int main(void)
 {
     test_monocore_string();
-    // test_monocore_large_class();
+    test_monocore_large_class();
     // test_monocore_string();
     // printf("siseof int : %i\n", sizeof(int));
     // printf("siseof addr_t : %i\n", sizeof(addr_t));

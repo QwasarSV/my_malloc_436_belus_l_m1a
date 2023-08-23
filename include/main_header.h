@@ -28,13 +28,14 @@
 #include <my_size_class.h>
 #include <my_binmap.h>
 #include <my_arena.h>
-#include <my_jemalloc.h>
+
 #include <my_mem_pool.h>
 #include <my_bitmap.h>
 #include <my_run.h>
 #include <my_tcache.h>
 #include <my_allocator.h>
 #include <my_linkedlist.h>
+#include <my_jemalloc.h>
 
 #include <test_fn_header_file.h>
 

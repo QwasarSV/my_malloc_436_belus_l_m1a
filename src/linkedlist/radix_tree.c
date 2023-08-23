@@ -170,8 +170,10 @@ radix_t* fetch_node()
     radix_t* new_node = NULL;
     if (!(new_node = allocate_node()))
     {
-        void* ptr = req_slot(14336);
-        int size = 14336 / sizeof(radix_t);
+        printf("requesting memory for radix_tree\n");
+        // void* ptr = req_slot(14336);
+        void * ptr = get_mem_chunck(4096);
+        int size = 4096 / sizeof(radix_t) - 1;
         init_memory_segment(ptr, size);
         new_node = allocate_node();
     }

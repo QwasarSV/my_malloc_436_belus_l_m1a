@@ -83,6 +83,20 @@ bool is_bitmap_full(run_t* run)
     return true;
 }
 
+bool is_bitmap_clear(run_t* run)
+{
+    int index = 0;
+    while (index < BITMAP_SIZE)
+    {
+        if (run->bmp[index].data != 0x00)
+        {
+            return false;
+        }
+        index += 1;
+    }
+    return true;
+}
+
 void set_bitmap(run_t* run)
 {
     int index = 0;

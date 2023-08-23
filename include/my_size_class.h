@@ -28,7 +28,7 @@ int binary_search(int array[], int left, int right, int value);
 int nearest_spacing(size_t size_request);
 int nearest_spacing_index(size_t size_request);
 int get_class_index(int value);
-int get_size_class(int class_index, size_t size);
+int get_size_class(int spacing, size_t size);
 int get_size_class_index(int class_index, size_t size);
 
 

@@ -120,14 +120,14 @@ int get_spacing_index(int value)
     return binary_search(spacing_values, 0, SPACING_COUNT - 1, value);
 }
 
-int get_size_class(int class_index, size_t size)
+int get_size_class(int spacing, size_t size)
 {
     int index = 0;
-    while (size_class[class_index][index] != 0)
+    while (size_class[spacing][index] != 0)
     {
-        if (size_class[class_index][index] >= size)
+        if (size_class[spacing][index] >= size)
         {
-            return size_class[class_index][index];
+            return size_class[spacing][index];
         }
         index += 1;
     }
