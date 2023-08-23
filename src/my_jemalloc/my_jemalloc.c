@@ -1,63 +1,22 @@
 #include <main_header.h>
 
-
-
-
-
-    // insert_run_at_head(&handler->pool, run);
-
 void* my_malloc(size_t size)
 {    
     void* ptr = NULL;
-    run_t* run = NULL;
-    int size_req = to_size_class(size);
+    
     if (handler == NULL)
     {
         create_mem_handler();
     }
-    if (is_within_class_range(size))
-    {
-        run = request_run_from_pool(size);
-    }
-    else
-    {
-        int new_size = to_page_size(size + sizeof(run_t));
-        ptr = request_memory(new_size);
-        run = set_run(ptr, new_size);
-        ptr = (void*)ptr + sizeof(run_t);
-        insert_run_on_radix_tree(run);
-        return (void*)ptr;
-    }
-    int slot = find_free_slot(run);
-    printf("Free slot index is : %i\n", slot);
-    set_in_bmp(run, slot, true);
-    int offset = (slot) * size_req;
-    int run_size = sizeof(run_t);
-    ptr = (void*)run + run_size + offset;
+
+    ptr = req_slot_on_global(size);
     return (void*)ptr;
 }
 
 int my_free(void* ptr)
 {
     run_t* run = find_run_start(handler->root, (void*)ptr);
-    if (run == NULL)
-    {
-        // set errno
-        printf("FAILLING AT RUN RETRIEVAL\n");
-        return EXIT_FAILURE;
-    }
-    printf("Run is address: %p \n", (void*)run);
-    printf("Run is size_class: %i \n", run->size_class);
-    if (is_within_class_range(run->size_class))
-    {
-        release_slot(run, ptr);
-        release_global_run(run);
-    }
-    else
-    {
-        release_run_start(handler->root, (void*)run);
-        munmap(run, run->size_class);
-    }
+    free_global_slot(run, ptr);
     return EXIT_SUCCESS;
 }
 

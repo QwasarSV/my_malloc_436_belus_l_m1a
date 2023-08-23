@@ -18,6 +18,10 @@ bool        is_within_class_range(size_t size);
 
 
 //global pool
+int     free_global_slot(run_t* run, void* ptr);
+void*   create_custom_sized_run(size_t size);
+void*   get_slot(run_t* run, size_t size_req);
+void*   req_slot_on_global(size_t size);
 void*   request_memory(size_t size);
 run_t*  create_from_memory(size_t size);
 bool    is_class_pool_free(size_t size);

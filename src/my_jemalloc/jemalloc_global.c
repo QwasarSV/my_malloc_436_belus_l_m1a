@@ -1,5 +1,73 @@
 #include <main_header.h>
 
+int free_global_slot(run_t* run, void* ptr)
+{
+    if (run == NULL)
+    {
+        // set errno
+        printf("FAILLING AT RUN RETRIEVAL\n");
+        return EXIT_FAILURE;
+    }
+    printf("Run is address: %p \n", (void*)run);
+    printf("Run is size_class: %i \n", run->size_class);
+    if (is_within_class_range(run->size_class))
+    {
+        release_slot(run, ptr);
+        // need to rearrange linkelist befor release. 
+        // for future update once data structure matured enough;
+        release_global_run(run);
+    }
+    else
+    {
+        release_run_start(handler->root, (void*)run);
+        munmap(run, run->size_class);
+    }
+    return EXIT_SUCCESS;
+}
+
+void* create_custom_sized_run(size_t size)
+{
+    void* ptr = NULL;
+    run_t* run = NULL;
+    int new_size = to_page_size(size + sizeof(run_t));
+    ptr = request_memory(new_size);
+    run = set_run(ptr, new_size);
+    ptr = (void*)ptr + sizeof(run_t);
+    insert_run_on_radix_tree(run);
+    return (void*)ptr;
+}
+
+void* get_slot(run_t* run, size_t size_req)
+{
+    void* ptr = NULL;
+    int slot = find_free_slot(run);
+    printf("Free slot index is : %i\n", slot);
+    set_in_bmp(run, slot, true);
+    int offset = (slot) * size_req;
+    int run_size = sizeof(run_t);
+    ptr = (void*)run + run_size + offset;
+    return ptr;
+}
+
+void* req_slot_on_global(size_t size)
+{
+    run_t* run = NULL;
+    void* ptr = NULL;
+    int size_req = to_size_class(size);
+    if (is_within_class_range(size))
+    {
+        run = request_run_from_pool(size);
+    }
+    else
+    {
+        ptr = create_custom_sized_run(size);
+        return (void*)ptr;
+    }
+    ptr = get_slot(run, size_req);
+    return (void*)ptr;
+}
+
+
 void* request_memory(size_t size)
 {
     void* ptr = NULL;
