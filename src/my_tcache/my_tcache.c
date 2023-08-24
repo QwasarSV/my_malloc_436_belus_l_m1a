@@ -5,7 +5,7 @@
 size_t mem_call_size;
 void insert_run_on_radix_tree(void* addr)
 {
-    printf("inserting address into radix tree : %p\n", addr);
+    // printf("inserting address into radix tree : %p\n", addr);
     insert(&handler->root, addr);
 }
 

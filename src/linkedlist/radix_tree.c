@@ -9,6 +9,40 @@ radix_t* create_node(void* ptr)
     return node;
 }
 
+// void insert(radix_t** root, void *ptr)
+// {
+//     if (!(*root))
+//     {
+//         *root = create_node(ptr);
+//         return;
+//     }
+//     uintptr_t address = (uintptr_t)ptr;
+//     radix_t* curr = *root;
+//     int bit_index = sizeof(void*) * 8 - 1;
+//     while (bit_index >= 0)
+//     {
+//         if ((address >> bit_index) & 1)
+//         {
+//             if (!curr->right)
+//             {
+//                 curr->right = create_node(ptr);
+//                 return;
+//             }
+//             curr = curr->right;
+//         }
+//         else
+//         {
+//             if (!curr->left)
+//             {
+//                 curr->left = create_node(ptr);
+//                 return;
+//             }
+//             curr = curr->left;
+//         }
+//         bit_index -= 1;
+//     }
+// }
+
 void insert(radix_t** root, void *ptr)
 {
     if (!(*root))
@@ -23,23 +57,25 @@ void insert(radix_t** root, void *ptr)
     {
         if ((address >> bit_index) & 1)
         {
-            if (!curr->right)
-            {
-                curr->right = create_node(ptr);
-                return;
-            }
-            curr = curr->right;
-        }
+          if (!curr->right)
+          {
+            curr->right = create_node(ptr);
+          }
+          curr = curr->right;
+        } 
         else
         {
-            if (!curr->left)
-            {
-                curr->left = create_node(ptr);
-                return;
-            }
-            curr = curr->left;
+          if (!curr->left)
+          {
+            curr->left = create_node(ptr);
+          }
+          curr = curr->left;
         }
-        bit_index -= 1;
+        if(curr->ptr == NULL)
+        {
+            curr->ptr = ptr;
+        }
+      bit_index -= 1;
     }
 }
 
@@ -108,69 +144,98 @@ uintptr_t validate_run(uintptr_t run_address, uintptr_t address, uintptr_t highe
     return highest_last_address;
 }
 
-void* find_run_start(radix_t* root, void *ptr)
-{
-    uintptr_t address = (uintptr_t)ptr;
-    uintptr_t highest_last_address = (uintptr_t)NULL;
-    uintptr_t current_address = (uintptr_t)NULL;
-    int bit_index = sizeof(void*) * 8 - 1; 
-    radix_t* tmp = NULL;
-    while (bit_index >= 0)
-    {
-        if (!(tmp = next_bit(root, (address >> bit_index) & 1)))
-        {
-            break;
-        }
-        root = tmp;
-        current_address = (uintptr_t)root->ptr;
-        // if (current_address == NULL)
-        // {
-        //     continue;
-        // }
-        if (current_address == address)
-        {
-            return (void*)current_address;
-        }
-        if (current_address > highest_last_address && current_address < address)
-        {
-            highest_last_address = validate_run(current_address, address, highest_last_address);
-        }
-        bit_index -= 1;
-    }
-    return (void*)highest_last_address;
-}
+// void* find_run_start(radix_t* root, void *ptr)
+// {
+//     uintptr_t address = (uintptr_t)ptr;
+//     uintptr_t highest_last_address = (uintptr_t)NULL;
+//     uintptr_t current_address = (uintptr_t)NULL;
+//     int bit_index = sizeof(void*) * 8 - 1; 
+//     radix_t* tmp = NULL;
+//     while (bit_index >= 0)
+//     {
+//         if (!(tmp = next_bit(root, (address >> bit_index) & 1)))
+//         {
+//             break;
+//         }
+//         root = tmp;
+//         current_address = (uintptr_t)root->ptr;
+//         // if (current_address == NULL)
+//         // {
+//         //     continue;
+//         // }
+//         if (current_address == address)
+//         {
+//             return (void*)current_address;
+//         }
+//         if (current_address > highest_last_address && current_address < address)
+//         {
+//             highest_last_address = validate_run(current_address, address, highest_last_address);
+//         }
+//         bit_index -= 1;
+//     }
+//     return (void*)highest_last_address;
+// }
 
 void release_run_start(radix_t* root, void *ptr)
 {
-    uintptr_t address = (uintptr_t)ptr;
-    uintptr_t highest_last_address = (uintptr_t)NULL;
-    uintptr_t current_address = (uintptr_t)NULL;
-    int bit_index = sizeof(void*) * 8 - 1; 
-    radix_t* tmp = NULL;
-    while (bit_index >= 0)
-    {
-        if (!(tmp = next_bit(root, (address >> bit_index) & 1)))
-        {
-            break;
-        }
-        root = tmp;
-        current_address = (uintptr_t)root->ptr;
-        if (current_address == address)
-        {
-            root->ptr = NULL;
-            return;
-        }
-        bit_index -= 1;
-    }
+    // uintptr_t address = (uintptr_t)ptr;
+    // uintptr_t highest_last_address = (uintptr_t)NULL;
+    // uintptr_t current_address = (uintptr_t)NULL;
+    // int bit_index = sizeof(void*) * 8 - 1; 
+    // radix_t* tmp = NULL;
+    // while (bit_index >= 0)
+    // {
+    //     if (!(tmp = next_bit(root, (address >> bit_index) & 1)))
+    //     {
+    //         break;
+    //     }
+    //     root = tmp;
+    //     current_address = (uintptr_t)root->ptr;
+    //     if (current_address == address)
+    //     {
+    //         root->ptr = NULL;
+    //         return;
+    //     }
+    //     bit_index -= 1;
+    // }
 }
 
+void* find_run_start(radix_t* root, void* ptr)
+{
+    uintptr_t highest_last_address = (uintptr_t)NULL;
+    uintptr_t current_address = (uintptr_t)NULL;
+    uintptr_t address = (uintptr_t)ptr;
+    radix_t* curr = root;
+    int bit_index = sizeof(void*) * 8 - 1;
+    while (bit_index >= 0)
+    {
+        if ((address >> bit_index) & 1)
+        {
+          if (!curr->right)
+          {
+            return curr->ptr;
+          }
+          curr = curr->right;
+        }
+        else
+        {
+          if (!curr->left)
+          {
+            return curr->ptr;
+          }
+          curr = curr->left;
+        }
+      bit_index -= 1;
+    }
+    return curr->ptr;
+}
 
 radix_t* fetch_node()
 {
     radix_t* new_node = NULL;
     if (!(new_node = allocate_node()))
     {
-        printf("requesting memory for radix_tree\n");
+        // printf("requesting memory for radix_tree\n");
         // void* ptr = req_slot(14336);
         void * ptr = get_mem_chunck(4096);
         int size = 4096 / sizeof(radix_t) - 1;

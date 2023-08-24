@@ -2,14 +2,14 @@
 
 int free_global_slot(run_t* run, void* ptr)
 {
-    if (run == NULL)
-    {
-        // set errno
-        printf("FAILLING AT RUN RETRIEVAL\n");
-        return EXIT_FAILURE;
-    }
-    printf("Run is address: %p \n", (void*)run);
-    printf("Run is size_class: %i \n", run->size_class);
+    // if (run == NULL)
+    // {
+    //     // set errno
+    //     printf("FAILLING AT RUN RETRIEVAL\n");
+    //     return EXIT_FAILURE;
+    // }
+    // printf("Run is address: %p \n", (void*)run);
+    // printf("Run is size_class: %i \n", run->size_class);
     if (is_within_class_range(run->size_class))
     {
         release_slot(run, ptr);
@@ -41,7 +41,7 @@ void* get_slot(run_t* run, size_t size_req)
 {
     void* ptr = NULL;
     int slot = find_free_slot(run);
-    printf("Free slot index is : %i\n", slot);
+    // printf("Free slot index is : %i\n", slot);
     set_in_bmp(run, slot, true);
     int offset = (slot) * size_req;
     int run_size = sizeof(run_t);
@@ -113,11 +113,13 @@ run_t* request_run_from_pool(int size)
     if (is_class_pool_free(size))
     {
         run = search_pool(class_req);
-        printf("found run at %p\n", (void*)run);
-        if (is_bitmap_full(run))
-        {
-            run = NULL;
-        }
+        // pr
+        // printf("found run at %p\n", (void*)run);
+        // if (run != NULL && is_bitmap_full(run))
+        // {
+        //     run = NULL;
+        // }
+
     }
     if (run == NULL)
     {
@@ -132,11 +134,11 @@ void release_global_run(run_t* run)
 {
     if (is_bitmap_clear(run))
     {
-        printf("RELEASING MEM TO SYSTEM\n");
+        // printf("RELEASING MEM TO SYSTEM\n");
         // release_run_start(handler->root, (void*)run);
         int size_req = run->size_class * BITMAP_SIZE * 8 + sizeof(run_t);
         int new_size_req = to_page_size(size_req);
-        printf("RELEASING MEM TO SYSTEM : %i\n", new_size_req);
+        // printf("RELEASING MEM TO SYSTEM : %i\n", new_size_req);
         // munmap(run, new_size_req);
     }
 }

@@ -13,7 +13,7 @@ bool is_within_class_range(size_t size)
 void release_slot(run_t* run, void* ptr)
 {
     void* run_start = (void*)run + sizeof(run_t);
-    // printf("Run is size_class: %i \n", run->size_class);
+    printf("Run is size_class: %i \n", run->size_class);
     int slot = ((uintptr_t)ptr - (uintptr_t)run_start)/run->size_class;
     printf("Freeing slot N: %i \n", slot);
     clear_in_bmp(run, slot);
@@ -55,7 +55,7 @@ arena_t* find_binmap(void* ptr)
     while (iterator != NULL)
     {
         current_address = (uintptr_t)iterator->arena->_tcache_[0][0].address;
-        if (current_address == ptr)
+        if (current_address == (uintptr_t)ptr)
         {
             return iterator->arena;;
         }
@@ -95,11 +95,17 @@ int find_next_size_class(arena_t* arena, int spacing, int class)
 run_t* search_pool(size_t size_class)
 {
     run_t* run = handler->pool;
+    int index = 0;
     while (run != NULL)
     {
         if (run->size_class == size_class)
         {
-            return run;
+            // int slot = find_free_slot(run);
+            // printf("checking size_class %i against request %i, slot %i is free and the bitmap is %i\n", run->size_class, size_class, slot, is_bitmap_full(run));            
+            if (!is_bitmap_full(run))
+            {
+                return run;
+            }
         }
         run = run->next;
     }

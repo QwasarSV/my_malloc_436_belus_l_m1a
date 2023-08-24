@@ -207,6 +207,10 @@ int my_je_malloc_test_01(ptr_l_t** head, char* src, int cycles)
 
     while (index < cycles)
     {
+        if (index % 100000 == 0)
+        {
+            printf("%i\n", index);
+        }
         ptr = (void*)alloc_and_cpy(src);
         tmp = create_new_test_node((void*) ptr);
         insert_test_node_at_head(head, tmp);
