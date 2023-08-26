@@ -6,12 +6,12 @@ void insert_bmp(bmp_t** head, bmp_t* bmp_to_insert)
     *head = bmp_to_insert;
 }
 
-void set_bitmap(page_t* page)
+void set_bitmap(bmp_t* bmp)
 {
     int index = 0;
     while (index < BITMAP_SIZE)
     {
-        page->bmp[index].data =  0x00;
+        bmp[index].data =  0x00;
         index += 1;
     }
 }
@@ -30,7 +30,8 @@ void set_bit(bmp_t* bmp, int index, int value)
 
 bool is_bitmap_full(bmp_t* bmp)
 {
-    int index = 0;
+    int start_offset = calc_nb_slot(sizeof(bmp_t)+ sizeof(page_t) , bmp->nb_page);
+    int index = start_offset + 5;
     while (index < BITMAP_SIZE)
     {
         if (bmp[index].data != 0xFF)
@@ -52,29 +53,34 @@ void set_in_bmp(bmp_t* bmp, int index, int value)
 
 void set_bits(bmp_t* bmp, int start, int len, int value)
 {
-  int index = 0;
-  while ( index < len)
-  {
-    set_in_bmp(bmp, start + index, value);
-    index += 1;
-  }
+    int index = 0;
+    while ( index < len)
+    {
+        set_in_bmp(bmp, start + index, value);
+        index += 1;
+    }
 }
 
-void initiate_bit_list(void* ptr, int nb_page)
+/* #################### count_free_bits ###################
+    count the nomber of free slots from a given position.
+    @return (int) Number of available slots
+*/
+
+void initialize_bit_list(void* ptr, int nb_page)
 {
-  bmp_t* new_bmp = (bmp_t*)ptr;
-  new_bmp->nb_page = nb_page;
-  new_bmp->next = NULL;
-  int index = 0;
-  while (index < BITMAP_SIZE)
-  {
-    new_bmp[index].data =  0x00;
-    index += 1;
-  }
-  int len = calc_nb_slot(sizeof(bmp_t)+ sizeof(page_t) , new_bmp->nb_page);
-  set_bits(new_bmp, 0, len, true);
-  // printf("insert_new_BMP\n");
-  insert_bmp(&handler->head, new_bmp);  
+    bmp_t* new_bmp = (bmp_t*)ptr;
+    new_bmp->nb_page = nb_page;
+    new_bmp->next = NULL;
+    int index = 0;
+    while (index < BITMAP_SIZE)
+    {
+        new_bmp[index].data =  0x00;
+        index += 1;
+    }
+    int len = calc_nb_slot(sizeof(bmp_t)+ sizeof(page_t) , new_bmp->nb_page);
+    set_bits(new_bmp, 0, len, true);
+    // printf("insert_new_BMP\n");
+    insert_bmp(&handler->head, new_bmp);  
 }
 
 int get_bit(bmp_t bmp, int index)
@@ -82,6 +88,11 @@ int get_bit(bmp_t bmp, int index)
     return (bmp.data >> index) & 1;
 }
 
+
+/* #################### count_free_bits ###################
+    count the nomber of free slots from a given position.
+    @return (int) Number of available slots
+*/
 int count_free_bits(bmp_t* bmp, int from, int len)
 {
     int byte_index = from / 8;
@@ -113,6 +124,13 @@ int count_free_bits(bmp_t* bmp, int from, int len)
     return free_bits_count;
 }
 
+// not optimized to recode
+// should have variable holding last free_position for quicker search
+// should have an actual algoritm to handle the search.
+/* #################### find_free_slot ###################
+    Roam through the bitlist to find an unused slot.
+    @return (int) free slot index
+*/
 
 int find_free_slot(bmp_t* bmp, int len)
 {
@@ -129,19 +147,19 @@ int find_free_slot(bmp_t* bmp, int len)
                 start = byte_index * 8 + bit_index;
                 if (start + len > BITMAP_SIZE* 8 -1)
                 {
-                  return -1;
+                    return -1;
                 }
                 nb_slot = count_free_bits(bmp, start, len);
                 if (nb_slot >= len)
                 {
-                  return start;
+                    return start;
                 }
-              bit_index += nb_slot % 8;
-              byte_index += nb_slot / 8;
+                bit_index += nb_slot % 8;
+                byte_index += nb_slot / 8;
               if (bit_index >= 8)
               {
-                byte_index += bit_index / 8;
-                bit_index %= 8;
+                    byte_index += bit_index / 8;
+                    bit_index %= 8;
               break;
               }  
             }
