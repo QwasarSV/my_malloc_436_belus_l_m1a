@@ -6,8 +6,9 @@
 
 int main(void)
 {
-    million_cycle_stress_test();
-    // test_monocore_string();
+    // million_cycle_stress_test();
+    // fill_test();
+    test_monocore_string();
     // test_monocore_large_class();
     printf("success !!\n");
 } 

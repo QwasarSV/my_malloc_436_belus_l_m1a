@@ -26,5 +26,5 @@ int         my_je_malloc_test_01(ptr_l_t** head, char* src, int cycles);
 int         test_monocore_string();
 void        loop_large_class();
 int         test_monocore_large_class();
-
+int         fill_test();
 #endif

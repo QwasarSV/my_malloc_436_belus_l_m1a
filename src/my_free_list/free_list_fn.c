@@ -1,7 +1,7 @@
 #include <main_header.h>
 
 // radix_t* memory_segment;
-radix_t* free_chunck = NULL;
+radix_t* free_chunk = NULL;
 
 void init_memory_segment(void* mem_seg, size_t elem_cnt)
 {
@@ -12,18 +12,18 @@ void init_memory_segment(void* mem_seg, size_t elem_cnt)
     }
     memory_segment[elem_cnt - 1].right = NULL;
 
-    free_chunck = &memory_segment[0];
+    free_chunk = &memory_segment[0];
 }
 
 radix_t* allocate_node()
 {
-    if (!free_chunck)
+    if (!free_chunk)
     {
         // write(STDERR_FILENO, MEM_segment_SPACE, SIZE_MSG_SPACE);
         return NULL;
     }
 
-    radix_t* node = free_chunck;
-    free_chunck = free_chunck->right;
+    radix_t* node = free_chunk;
+    free_chunk = free_chunk->right;
     return node;
 }

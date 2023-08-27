@@ -1,7 +1,7 @@
 
 void* my_memset(void* ptr, char ch, int len)
 {
-    int index = 0;
+    long long index = 0;
     char* ptr_a = ptr;
     while (index < len)
     {

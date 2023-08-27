@@ -73,8 +73,10 @@ void* find_page_start(radix_t* root, void* ptr)
 radix_t* fetch_node()
 {
     radix_t* new_node = NULL;
+    
     if (!(new_node = allocate_node()))
     {
+        printf("size page is : %i\n",handler->size_page);    
         void * ptr = my_mmap(handler->size_page);
         int size = handler->size_page / sizeof(radix_t) - 1;
         init_memory_segment(ptr, size);

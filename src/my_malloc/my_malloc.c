@@ -22,17 +22,19 @@ void* my_malloc(size_t size)
 
 int my_free(void* ptr)
 {
-    bmp_t* bmp = find_page_start(handler->search_tree, (void*)ptr);
+    printf("retreiving page from ptr : %p\n", ptr);
+    page_t* page = find_page_start(handler->search_tree, (void*)ptr);
     tee_t* tee = (tee_t*)ptr - 1;
     // printf("NB slot is : %i\n", tee->nb_slot);
-    // printf("found page on tree : %p\n", bmp);
+    printf("found page on tree : %p\n", page);
   
-    uintptr_t offset = (uintptr_t)ptr - (uintptr_t)bmp;
-    // printf("offset value : %i\n", offset);
-    // printf("nb_page : %i\n", bmp->nb_page);
-    int start = calc_nb_slot(offset, bmp->nb_page);
+    uintptr_t offset = (uintptr_t)(tee) - (uintptr_t)page->bitnode;
+    printf("offset value : %i\n", offset);
+    printf("nb_page : %i\n", page->bitnode->nb_page);
+    // int start = calc_nb_slot(offset, page->bitnode->nb_page);
+    // printf("free :Offset: %i | slot: %i | len: %i\n", offset, start, tee->nb_slot);
     // printf("pos is %i\n", start);
-    set_bits(bmp, start, tee->nb_slot, false);
-    release_mem(bmp);
+    // set_bits(page->bitnode->bmp, start, tee->nb_slot, false);
+    // release_mem(tmp);
   return 0;
 }

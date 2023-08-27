@@ -16,11 +16,11 @@ typedef struct tee_s tee_t;
 #define MEM_HANDLER_S
 struct mem_handler_s
 {
-	size_t    cursor;
-	size_t    size_page;
-	void*     memory;
-	radix_t*  search_tree;
-	bmp_t*    head;
+	size_t    	cursor;
+	size_t    	size_page;
+	void*     	memory;
+	radix_t*  	search_tree;
+	bitlist_t*  head;
 };
 
 typedef struct mem_handler_s handler_t; 
@@ -30,8 +30,8 @@ typedef struct mem_handler_s handler_t;
 #define _PAGE_S_
 struct _page_s_
 {
-    bmp_t   bmp[BITMAP_SIZE];
-    char*   byte;
+    bitlist_t*  bitnode;
+    char*   	byte;
 };
 typedef struct _page_s_ page_t;
 #endif
@@ -48,7 +48,7 @@ void    initialize_handler();
 page_t* set_page(void* ptr, int nb_page);
 void*   req_memory(size_t size);
 void*   my_malloc(size_t size);
-void    release_mem(bmp_t* bmp);
+void 	release_mem(bitlist_t* node);
 int     my_free(void* ptr);
 
 #endif

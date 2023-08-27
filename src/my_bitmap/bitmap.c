@@ -1,9 +1,9 @@
 #include <main_header.h>
 
-void insert_bmp(bmp_t** head, bmp_t* bmp_to_insert)
+void insert_bmp(bitlist_t** head, bitlist_t* node_to_insert)
 {
-    bmp_to_insert->next = *head;
-    *head = bmp_to_insert;
+    node_to_insert->next = *head;
+    *head = node_to_insert;
 }
 
 void set_bitmap(bmp_t* bmp)
@@ -28,13 +28,13 @@ void set_bit(bmp_t* bmp, int index, int value)
     }
 }
 
-bool is_bitmap_full(bmp_t* bmp)
+bool is_bitmap_full(bitlist_t* node)
 {
-    int start_offset = calc_nb_slot(sizeof(bmp_t)+ sizeof(page_t) , bmp->nb_page);
+    int start_offset = calc_nb_slot(sizeof(page_t) , node->nb_page);
     int index = start_offset + 5;
     while (index < BITMAP_SIZE)
     {
-        if (bmp[index].data != 0xFF)
+        if (node->bmp[index].data != 0xFF)
         {
             return false;
         }
@@ -68,19 +68,20 @@ void set_bits(bmp_t* bmp, int start, int len, int value)
 
 void initialize_bit_list(void* ptr, int nb_page)
 {
-    bmp_t* new_bmp = (bmp_t*)ptr;
-    new_bmp->nb_page = nb_page;
-    new_bmp->next = NULL;
+    bitlist_t* new_node = (bitlist_t*)ptr;
+
     int index = 0;
-    while (index < BITMAP_SIZE)
+    while (index < BITMAP_SIZE - 10)
     {
-        new_bmp[index].data =  0x00;
+        new_node->bmp[index].data =  0x00;
         index += 1;
     }
-    int len = calc_nb_slot(sizeof(bmp_t)+ sizeof(page_t) , new_bmp->nb_page);
-    set_bits(new_bmp, 0, len, true);
+    new_node->nb_page = nb_page; 
+    new_node->next = NULL;
+    int len = calc_nb_slot(sizeof(bitlist_t) + sizeof(bitlist_t) + sizeof(page_t), new_node->nb_page);
+    set_bits(new_node->bmp, 0, len, true);
     // printf("insert_new_BMP\n");
-    insert_bmp(&handler->head, new_bmp);  
+    insert_bmp(&handler->head, new_node);  
 }
 
 int get_bit(bmp_t bmp, int index)
