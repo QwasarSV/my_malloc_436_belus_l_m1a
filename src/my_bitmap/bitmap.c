@@ -65,7 +65,6 @@ void set_bits(bmp_t* bmp, int start, int len, int value)
     count the nomber of free slots from a given position.
     @return (int) Number of available slots
 */
-
 void initialize_bit_list(void* ptr, int nb_page)
 {
     bitlist_t* new_node = (bitlist_t*)ptr;
@@ -132,7 +131,6 @@ int count_free_bits(bmp_t* bmp, int from, int len)
     Roam through the bitlist to find an unused slot.
     @return (int) free slot index
 */
-
 int find_free_slot(bmp_t* bmp, int len)
 {
     int byte_index = 0;

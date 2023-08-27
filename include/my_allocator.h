@@ -42,16 +42,20 @@ typedef struct _page_s_ page_t;
 extern handler_t*   handler;
 extern void*        my_mmap(int size);
 
-int     to_page_size(size_t size);
-int     calc_nb_slot(size_t size, int nb_page);
-int     calc_offset(int slot, int nb_page);
-void*   get_ptr(size_t size);
-void    set_handler(size_t size_page);
-void    initialize_handler();
-page_t* set_page(void* ptr, int nb_page);
-void*   req_memory(size_t size);
-void*   my_malloc(size_t size);
-void 	release_mem(bitlist_t* node);
-void    my_free(void* ptr);
+int     	to_page_size(size_t size);
+int     	calc_nb_slot(size_t size, int nb_page);
+int     	calc_offset(int slot, int nb_page);
+void*   	get_ptr(size_t size);
+void    	set_handler(size_t size_page);
+void    	initialize_handler();
+page_t* 	set_page(void* ptr, int nb_page);
+void*   	req_memory(size_t size);
+void 		release_mem(bitlist_t* node);
+bitlist_t* 	retrieve_bitlist(void* ptr);
+bool 		is_page_valid(page_t* page, void* ptr);
+void    	my_free(void* ptr);
+void*   	my_malloc(size_t size);
+// void    	free(void* ptr);
+// void*   	malloc(size_t size);
 
 #endif

@@ -56,6 +56,7 @@ void* get_ptr(size_t size)
             tee->magic_number = MAGIC_NUMBER;
             // printf("nb_slot : %i, len: %i\n", tee->nb_slot, len);
             // return (void*)bmp + offset;
+            handler->memory = (void*)(tee + 1)
             return (void*)(tee + 1);
         }
         // printf("bmp val%p\n", bmp);
@@ -82,11 +83,9 @@ void initialize_handler()
         handler = ptr;
         set_handler(size_page);
         ptr = set_page((void*)(handler + 1), 1);
-        // initialize_bit_list((void*)(handler + 1), 1);
         int len = calc_nb_slot(sizeof(handler_t) + sizeof(bitlist_t) + sizeof(page_t), 1);
         set_bits(handler->head->bmp, 0, len, true);
         insert(&handler->search_tree, NULL);
-        // insert(&handler->search_tree, ptr);
         insert(&handler->search_tree, (void*)ptr);
     }
 }
@@ -97,32 +96,11 @@ page_t* set_page(void* ptr, int nb_page)
     bitlist_t* bitlist = (bitlist_t*) (((char*)ptr) + sizeof(page_t));
     char* byte = ((char*)bitlist) + sizeof(bitlist_t);
     page->bitnode = bitlist;
-    // page->bitnode->nb_page = nb_page;
-    // page->bitnode->next = NULL;
     initialize_bit_list((void*)page->bitnode, nb_page);
     page->byte = byte;
     printf("insert page on tree : %p\n", page);
     insert(&(handler->search_tree), page);
     return page;
-    // page_t* page = ptr;
-    // page->bitnode = ptr + sizeof(page_t);
-    // page->bitnode->nb_page = nb_page;
-    // page->bitnode->next = NULL;
-    // initialize_bit_list(ptr, nb_page);
-    // page->byte = (void*)(sizeof(page_t)+sizeof(bitlist_t));
-    // insert(&handler->search_tree, page);
-    // return page;
-    // char* char_ptr = (char*)ptr;
-    // page_t* page = (page_t*)char_ptr;
-    // char_ptr += sizeof(page_t);
-    // page->bitnode = (bitlist_t*)char_ptr;
-    // char_ptr += sizeof(bitlist_t);
-    // page->bitnode->nb_page = nb_page;
-    // page->bitnode->next = NULL;
-    // initialize_bit_list(page->bitnode, nb_page);
-    // page->byte = char_ptr;
-    // insert(&handler->search_tree, page);
-    // return page;
 }
  
 void* req_memory(size_t size)
@@ -134,7 +112,6 @@ void* req_memory(size_t size)
     ptr = my_mmap(new_size);
     if (ptr == MAP_FAILED)
     {
-        // mmap sets errno appropriately
         return NULL;
     }
     ptr = set_page(ptr, nb_page);
@@ -150,4 +127,41 @@ void release_mem(bitlist_t* node)
         size_t size_dealloc = node->nb_page * handler->size_page;
         munmap(ptr, size_dealloc);
     }
+}
+
+bool is_page_valid(page_t* page, void* ptr)
+{
+    if ((uintptr_t)page > (uintptr_t)ptr)
+    {
+        return false;
+    }
+    uintptr_t offset = (uintptr_t)ptr - (uintptr_t)page->bitnode;
+    uintptr_t size_page = page->bitnode->nb_page * handler->size_page;
+    if (offset > size_page || offset < 0)
+    {
+        return false;
+    }
+    return true;
+}
+
+// In need of an algo or tree to handle that.
+bitlist_t* retrieve_bitlist(void* ptr)
+{
+    bitlist_t* tmp       = handler->head;
+    uintptr_t  len_page  = 0;
+    uintptr_t  start     = 0;
+    uintptr_t  end       = 0;
+    uintptr_t  value     = (uintptr_t)ptr;
+    while (tmp != NULL)
+    {
+        len_page = tmp->nb_page * handler->size_page;
+        start = (uintptr_t)tmp;
+        end = start + len_page;
+        if (value > start && value < end)
+        {
+            return tmp;
+        }
+        tmp = tmp->next;
+    }
+    return NULL;
 }
