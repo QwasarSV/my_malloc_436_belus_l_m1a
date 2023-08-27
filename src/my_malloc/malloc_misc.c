@@ -53,6 +53,7 @@ void* get_ptr(size_t size)
             printf("malloc :Offset: %i | slot: %i | len: %i\n",offset, slot, len);
             tee = (tee_t*)tmp + offset;
             tee->nb_slot = len;
+            tee->magic_number = MAGIC_NUMBER;
             // printf("nb_slot : %i, len: %i\n", tee->nb_slot, len);
             // return (void*)bmp + offset;
             return (void*)(tee + 1);
@@ -123,7 +124,7 @@ page_t* set_page(void* ptr, int nb_page)
     // insert(&handler->search_tree, page);
     // return page;
 }
-    
+ 
 void* req_memory(size_t size)
 {
     size_t new_size = to_page_size(size);

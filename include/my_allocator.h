@@ -3,11 +3,14 @@
 
 #include <main_header.h>
 
+#define MAGIC_NUMBER 0xDEADFACE
+
 #ifndef _TEE_S_
 #define _TEE_S_
 struct tee_s
 {
-    unsigned char nb_slot;
+    unsigned char 	nb_slot;
+	int 			magic_number;
 };
 typedef struct tee_s tee_t;
 #endif
@@ -49,6 +52,6 @@ page_t* set_page(void* ptr, int nb_page);
 void*   req_memory(size_t size);
 void*   my_malloc(size_t size);
 void 	release_mem(bitlist_t* node);
-int     my_free(void* ptr);
+void    my_free(void* ptr);
 
 #endif
