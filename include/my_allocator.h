@@ -53,9 +53,9 @@ void*   	req_memory(size_t size);
 void 		release_mem(bitlist_t* node);
 bitlist_t* 	retrieve_bitlist(void* ptr);
 bool 		is_page_valid(page_t* page, void* ptr);
-void    	my_free(void* ptr);
-void*   	my_malloc(size_t size);
-// void    	free(void* ptr);
-// void*   	malloc(size_t size);
+// void    	my_free(void* ptr);
+// void*   	my_malloc(size_t size);
+void    	free(void* ptr);
+void*   	malloc(size_t size);
 
 #endif

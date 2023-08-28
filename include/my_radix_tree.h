@@ -19,4 +19,6 @@ radix_t*    create_node(void* ptr);
 void        insert(radix_t** root, void *ptr);
 void*       find_page_start(radix_t* root, void* ptr);
 
+extern radix_t* free_chunk;
+
 #endif

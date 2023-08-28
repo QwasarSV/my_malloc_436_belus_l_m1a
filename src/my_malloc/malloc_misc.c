@@ -8,7 +8,7 @@ int to_page_size(size_t size)
     int total_size = size +sizeof(page_t);
     int new_size = 0;
     new_size = total_size + (page_size - total_size % page_size);
-    printf("size_req to mmap : %i\n", new_size);
+    // printf("size_req to mmap : %i\n", new_size);
     return new_size;
 }
 
@@ -21,13 +21,13 @@ int calc_nb_slot(size_t size, int nb_page)
     {
         return 1;
     } 
-    return len;
+    return len  +1;
 }
 
 int calc_offset(int slot, int nb_page)
 {
     int total_slot = BITMAP_SIZE * 8;
-    int offset = (nb_page * handler->size_page)/total_slot*slot;
+    int offset = ((nb_page * handler->size_page) / total_slot) * slot;
     return offset;
 }
 
@@ -46,17 +46,21 @@ void* get_ptr(size_t size)
     while (tmp != NULL)
     {
         slot = find_free_slot(tmp->bmp, len);
+        if (slot + len >= BITMAP_SIZE * 8)
+        {
+            return NULL;
+        }
         if (slot != -1)
         {
             set_bits(tmp->bmp, slot, len, true);
             offset = calc_offset(slot, tmp->nb_page);
-            printf("malloc :Offset: %i | slot: %i | len: %i\n",offset, slot, len);
-            tee = (tee_t*)tmp + offset;
+            // printf("malloc :Offset: %i | slot: %i | len: %i\n",offset, slot, len);
+            tee = (tee_t*)((char*)tmp + offset);
             tee->nb_slot = len;
             tee->magic_number = MAGIC_NUMBER;
             // printf("nb_slot : %i, len: %i\n", tee->nb_slot, len);
             // return (void*)bmp + offset;
-            handler->memory = (void*)(tee + 1)
+            handler->memory = (void*)(tee + 1);
             return (void*)(tee + 1);
         }
         // printf("bmp val%p\n", bmp);
@@ -85,8 +89,8 @@ void initialize_handler()
         ptr = set_page((void*)(handler + 1), 1);
         int len = calc_nb_slot(sizeof(handler_t) + sizeof(bitlist_t) + sizeof(page_t), 1);
         set_bits(handler->head->bmp, 0, len, true);
-        insert(&handler->search_tree, NULL);
-        insert(&handler->search_tree, (void*)ptr);
+        // insert(&handler->search_tree, NULL);
+        // insert(&handler->search_tree, (void*)ptr);
     }
 }
 
@@ -98,8 +102,8 @@ page_t* set_page(void* ptr, int nb_page)
     page->bitnode = bitlist;
     initialize_bit_list((void*)page->bitnode, nb_page);
     page->byte = byte;
-    printf("insert page on tree : %p\n", page);
-    insert(&(handler->search_tree), page);
+    // printf("insert page on tree : %i\n", (uintptr_t)page);
+    insert(&handler->search_tree, page);
     return page;
 }
  

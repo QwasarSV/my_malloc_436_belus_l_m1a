@@ -1,7 +1,12 @@
 #include <main_header.h>
 
-void* my_malloc(size_t size)
+// void* my_malloc(size_t size)
+void* malloc(size_t size)
 {
+    char buff[15];
+    itoa(size, buff, 10);
+    write(1, buff, my_strlen(buff));
+    write(1,"\n", 1);
     if (size > PTRDIFF_MAX)
     {
         errno = EINVAL;
@@ -21,20 +26,33 @@ void* my_malloc(size_t size)
         req_memory(size_req);
         ptr = get_ptr(size_req);
     }
+    
+    // printf("pointer addresse is at %i\n", (uintptr_t)ptr);
     return ptr;
 }
 
-void my_free(void* ptr)
+// void my_free(void* ptr)
+void free(void* ptr)
 {
+    // write(1,"free\n", 5);
     // printf("retreiving page from ptr : %p\n", ptr);
     page_t*     page = find_page_start(handler->search_tree, (void*)ptr);
+    if (page == NULL)
+    {
+        return;
+    } 
     tee_t*      tee = (tee_t*)ptr - 1;
     bitlist_t*  bitnode = NULL;
     if (tee != NULL && tee->magic_number == 0xDEADFACE)
     {
-        bitnode = page->bitnode;
+        // printf("tee ok \n");
+        if(page != NULL)
+        {
+            bitnode = page->bitnode;
+        }
         if (!is_page_valid(page, ptr))
         {
+            // printf("page not valid \n");
             if (!(bitnode = retrieve_bitlist(ptr)))
             {
                 return;
