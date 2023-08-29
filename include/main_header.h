@@ -17,7 +17,7 @@
 #include <my_string.h>
 #include <my_allocator.h>
 #include <unitests.h>
-#include <my_error_handler.h>
+// #include <my_error_handler.h>
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1

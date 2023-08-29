@@ -57,5 +57,7 @@ bool 		is_page_valid(page_t* page, void* ptr);
 // void*   	my_malloc(size_t size);
 void    	free(void* ptr);
 void*   	malloc(size_t size);
-
+void* 		realloc(void* ptr, int size);
+void* 		calloc(size_t num, size_t size);
+size_t 		malloc_usable_size(void* ptr);
 #endif

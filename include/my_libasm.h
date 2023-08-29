@@ -1,7 +1,4 @@
 #ifndef __MY_LIBASM_
-#define __MY_LIBASM_
-
-#include <main_header.h>
 
 // Declare the assembly function
 extern int      _my_strlen(char* str);
