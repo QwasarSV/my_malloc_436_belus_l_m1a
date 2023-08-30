@@ -32,11 +32,13 @@ int my_ctoi(char *string, size_t n)
                 num = -num;
                 break;
             }
+
         }
         else
         {
             num += (string[n]- '0')*mult; // convert to numeric value
             mult *=10;
+
         }
     }
     return num;
