@@ -7,7 +7,39 @@ The task at hand is to implement a memory management system using my own impleme
 
 ## Description
 
-The malloc function allocates a block of memory of the requested size and returns a pointer to the start of the block. The free function deallocates the block of memory pointed to by the pointer passed to it. The calloc function allocates a block of memory for an array of num elements, each of them size bytes long, and returns a pointer to the first byte of the block. The realloc function changes the size of the memory block pointed to by ptr to size bytes
+This project works as a lib and replace your system malloc.
+
+In this implementation, instead of requesting memory from the system every time the user calls my_malloc, we request a large chunk of memory and divide it into smaller parts. When the user calls my_malloc, we return a suitable portion of this memory. This way, we minimize the number of system calls and manage the memory more efficiently.
+
+
+Memory structure :
+```
+                     ┌───────────────┐
+                     │  mem_handler  │
+               ┌─────┴───────────────┴──┐
+               │                        │
+       ┌───────┴───────┐            ┌───┴───┐
+       │ interval_tree │            │ pages │
+       └───────┬───────┘            └───┬───┘
+               │                        │ (metadata)
+     ┌─────────┴───────┐            ┌───┴─────┐
+     │ pages_addresses │            │ bitnode │-->bitnode->...
+     └─────────────────┘            └───┬─────┘
+                                        │
+                                    ┌───┴────┐
+                                    │ bitmap │
+                                    └───┬────┘
+                                        │
+                                    ┌───┴────────┐
+                                    │ tee<->slot │
+                                    └────────────┘
+
+
+```
+The interval tree serve as a search tree and will only store the pages addresses (mmap calls) and not the user allocation;
+User allocation are stored in a the tee struct which hold an unsigned char to keep track of the number allocated slots and a magic_number to verify the ptr authenticity;
+
+The get_ptr function is used to find a suitable block of memory for the user. The req_memory function is used to request a chunk of memory from the system using mmap and divide it into smaller blocks. The set_page function is used to initialize the memory and the release_mem function is used to free the memory and return it to the system.
 
 The calculation of the position of a returned pointer  is based on an unsigned char placed just before the allocation; the allocation and return of slots rely on this and on a bitmap arranged on each page. The bitmaps are linked in a linked list manner.
 
@@ -18,7 +50,7 @@ No matter the multiple of sizepage that the page does, it is always divided acco
 
 So if you return a pointer, it finds the address of the page by itself and makes the slot available.
 
-This design ensures efficient use of memory with minimal overhead, as only the addresses of the pages are stored in the tree, not the allocations
+This design ensures efficient use of memory with minimal overhead, as only the addresses of the pages are stored in the tree, not the allocations.
 Returning a pointer automatically makes the corresponding slot available, optimizing memory managemement.
 
 ## Installation
@@ -50,7 +82,21 @@ make fclean
 To use the malloc function, simply call it with the size of the block of memory you want to allocate. For example:
 
 ```c
-void* ptr = malloc(100); // allocates 100 bytes of memory
+#include <main_header.h>
+
+int main(void)
+{
+    char *ptr = malloc(10);
+    if (ptr == NULL)
+    {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    strcpy(ptr, "Hello");
+    printf("%s\n", ptr);
+    free(ptr);
+    return 0;
+}
 ```
 
 To use the free function, simply call it with a pointer to the block of memory you want to deallocate. For example:
