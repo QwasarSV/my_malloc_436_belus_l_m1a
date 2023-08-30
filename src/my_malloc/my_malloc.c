@@ -27,19 +27,21 @@ void* malloc(size_t size)
 // void my_free(void* ptr)
 void free(void* ptr)
 {
-    page_t*     page = find_page_start(handler->search_tree, (void*)ptr);
-    if (page == NULL)
+    intree_t* node = find_page_start(handler->search_tree, (void*)ptr);
+    if (node == NULL)
     {
         return;
-    } 
+    }
+    page_t* page = node->address;
     tee_t*      tee = (tee_t*)ptr - 1;
     bitlist_t*  bitnode = NULL;
     if (tee != NULL && tee->magic_number == 0xDEADFACE)
     {
-        if(page != NULL)
+        if (page != NULL)
         {
             bitnode = page->bitnode;
         }
+
         uintptr_t offset = (uintptr_t)(tee) - (uintptr_t)bitnode;
         int start = calc_nb_slot(offset, bitnode->nb_page);
         set_bits(bitnode->bmp, start, tee->nb_slot, false);

@@ -12,7 +12,7 @@
 
 #include <my_bitmap.h>
 #include <my_libasm.h>
-#include <my_radix_tree.h>
+#include <my_interval_tree.h>
 #include <my_free_list.h>
 #include <my_string.h>
 #include <my_allocator.h>

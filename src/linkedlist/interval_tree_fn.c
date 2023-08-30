@@ -1,51 +1,83 @@
 #include <main_header.h>
 
-radix_t* create_node(void* ptr)
+
+size_t set_page_len(void* ptr)
 {
-    radix_t *node = fetch_node();
-    node->ptr = ptr;
-    node->left = node->right = NULL;
-    return node;
+    page_t* page = (page_t*)ptr;
+    size_t page_len = page->bitnode->nb_page * handler->size_page;
+    return page_len - 1; 
 }
 
- void insert(radix_t** head, void *ptr)
-{
-    radix_t* node_to_insert = create_node(ptr);
-    node_to_insert->right = *head;
-    *head = node_to_insert;
-}
 
-void* find_page_start(radix_t* root, void* ptr)
+intree_t* create_node(void* ptr)
 {
-    radix_t*   tmp       = root;
-    page_t*    page      = NULL;
-    int        len_page  = 0;
-    uintptr_t  start     = 0;
-    uintptr_t  end       = 0;
-    uintptr_t  value     = (uintptr_t)ptr;
-    while (tmp != NULL)
+    intree_t* tmp = fetch_node();
+    
+    if (!tmp)
     {
-        page = (page_t*)tmp->ptr;
-        len_page = page->bitnode->nb_page * handler->size_page;
-        start = (uintptr_t)tmp->ptr;
-        end = (uintptr_t)tmp->ptr + len_page;
-        if (start < value && value < end)
-        {
-            return (void*)tmp->ptr;
-        }
-        tmp = tmp->right;
+      return NULL;
     }
-    return NULL;
+    size_t page_len = set_page_len(ptr);
+    tmp->address = ptr;
+    tmp->max = (intptr_t)ptr + page_len;
+    tmp->left = NULL; 
+    tmp->right = NULL;
+    return tmp;
 }
 
-radix_t* fetch_node()
+intree_t* insert(intree_t* root, void* ptr)
 {
-    radix_t* new_node = NULL;
+    if (root == NULL)
+    {
+      return create_node(ptr);
+    }
+
+    uintptr_t low = (uintptr_t)root->address;
+
+    if ((uintptr_t)ptr < low )
+    {
+        root->left = insert(root->left, ptr);
+    } 
+    else
+    {
+        root->right = insert(root->right, ptr);
+    }
+    size_t page_len = set_page_len(ptr);
+    if (root->max < (uintptr_t)ptr + page_len)
+    {
+        root->max = (uintptr_t)ptr + page_len;
+    }
+  return root;
+}
+
+intree_t* find_page_start(intree_t* root, void* ptr)
+{
+    if (root == NULL)
+    { 
+      return NULL;
+    }
+    size_t page_len = set_page_len(root->address);
+    if ((uintptr_t)root->address <= (uintptr_t)ptr 
+      && (uintptr_t)ptr <= (uintptr_t)root->address + page_len)
+    {
+      return root;
+    } 
+    if (root->left != NULL && root->left->max >= (uintptr_t)ptr)
+    {
+        return find_page_start(root->left, ptr);
+    }
+    return find_page_start(root->right, ptr);
+}
+
+
+intree_t* fetch_node()
+{
+    intree_t* new_node = NULL;
     new_node = allocate_node();
     if (new_node == NULL)
     {
         void * ptr = my_mmap(handler->size_page);
-        int size = handler->size_page / sizeof(radix_t) - 1;
+        int size = handler->size_page / sizeof(intree_t) - 1;
         init_memory_segment(ptr, size);
         new_node = allocate_node();
     }
@@ -54,7 +86,57 @@ radix_t* fetch_node()
 
 
 // algo graveyard
+//---------------------------------works just fine
+// radix_t* create_node(void* ptr)
+// {
+//     radix_t *node = fetch_node();
+//     node->ptr = ptr;
+//     node->left = node->right = NULL;
+//     return node;
+// }
+
+//  void insert(radix_t** head, void *ptr)
+// {
+//     radix_t* node_to_insert = create_node(ptr);
+//     node_to_insert->right = *head;
+//     *head = node_to_insert;
+// }
+
+// void* find_page_start(radix_t* root, void* ptr)
+// {
+//     radix_t*   tmp       = root;
+//     page_t*    page      = NULL;
+//     int        len_page  = 0;
+//     uintptr_t  start     = 0;
+//     uintptr_t  end       = 0;
+//     uintptr_t  value     = (uintptr_t)ptr;
+//     while (tmp != NULL)
+//     {
+//         page = (page_t*)tmp->ptr;
+//         len_page = page->bitnode->nb_page * handler->size_page;
+//         start = (uintptr_t)tmp->ptr;
+//         end = (uintptr_t)tmp->ptr + len_page;
+//         if (start < value && value < end)
+//         {
+//             return (void*)tmp->ptr;
+//         }
+//         tmp = tmp->right;
+//     }
+//     return NULL;
+// }
 //-----------------------------------
+
+// #ifndef _RADIX_NODE_S_
+// #define _RADIX_NODE_S_
+// struct radix_node_s
+// {
+//     void*                ptr;
+//     struct radix_node_s* left;
+//     struct radix_node_s* right; 
+// };
+// typedef struct radix_node_s radix_t;
+// #endif
+
 // void insert(radix_t** root, void *ptr)
 // {
 //     if (!(*root))
@@ -498,15 +580,15 @@ radix_t* fetch_node()
 //------------------------------interval search
 // radix_t* create_node(void* low, void* high)
 // {
-//     radix_t* temp = malloc(sizeof(radix_t));
+//     radix_t* tmp = malloc(sizeof(radix_t));
 
-//     if (!temp) return NULL;
-//     temp->low = low;
-//     temp->high = high;
-//     temp->max = (intptr_t)high;
-//     temp->left = temp->right = NULL;
+//     if (!tmp) return NULL;
+//     tmp->low = low;
+//     tmp->high = high;
+//     tmp->max = (intptr_t)high;
+//     tmp->left = tmp->right = NULL;
 
-//     return temp;
+//     return tmp;
 // }
 
 // radix_t* insert(radix_t* root, void* low, void* high)

@@ -1,6 +1,7 @@
 #include <main_header.h>
 
 handler_t* handler = NULL;
+
 /* #################### to_page_size ###################
     Set size to page_size standard;
     @return (int) page_size
@@ -86,7 +87,6 @@ void* get_ptr(size_t size)
 // return (void*)bmp + offset;
 // printf("bmp val%p\n", bmp);
 
-
 /* #################### set_handler ###################
     set handler
     @return (void)
@@ -99,7 +99,6 @@ void set_handler(size_t size_page)
     handler->search_tree = NULL;
     handler->head = NULL;  
 }
-
 
 /* #################### set_handler ###################
     set handler
@@ -134,7 +133,8 @@ page_t* set_page(void* ptr, int nb_page)
     page->bitnode = bitlist;
     initialize_bit_list((void*)page->bitnode, nb_page);
     page->byte = byte;
-    insert(&handler->search_tree, page);
+    // insert(&handler->search_tree, page);
+    handler->search_tree = insert(handler->search_tree, page);
     return page;
 }
 // printf("insert page on tree : %i\n", (uintptr_t)page);

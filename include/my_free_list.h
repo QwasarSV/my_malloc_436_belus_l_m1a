@@ -4,6 +4,6 @@
 #include <main_header.h>
 
 void init_memory_segment(void* mem_seg, size_t elem_cnt);
-radix_t* allocate_node();
+intree_t* allocate_node();
 
 #endif

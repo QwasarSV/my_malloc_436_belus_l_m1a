@@ -2,7 +2,12 @@
 
 size_t malloc_usable_size(void* ptr)
 {
-    page_t* page = find_page_start(handler->search_tree, (void*)ptr);
+    intree_t* node = find_page_start(handler->search_tree, (void*)ptr);
+    if (node == NULL)
+    {
+        return 0;
+    }
+    page_t* page = node->address;
     if (page == NULL)
     {
         return 0;

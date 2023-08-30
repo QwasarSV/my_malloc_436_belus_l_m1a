@@ -1,6 +1,6 @@
 #include <main_header.h>
 
-radix_t* free_chunk = NULL;
+intree_t* free_chunk = NULL;
 
 
 /* #################### init_memory_segment ###################
@@ -9,7 +9,7 @@ radix_t* free_chunk = NULL;
 */
 void init_memory_segment(void* mem_seg, size_t elem_cnt)
 {
-    radix_t* memory_segment = (radix_t*)mem_seg;
+    intree_t* memory_segment = (intree_t*)mem_seg;
     for (int index = 0; index < elem_cnt - 1; index++)
     {
         memory_segment[index].right = &memory_segment[index + 1];
@@ -23,14 +23,14 @@ void init_memory_segment(void* mem_seg, size_t elem_cnt)
     fetch node and move free_list head forward
     @return (node)
 */
-radix_t* allocate_node()
+intree_t* allocate_node()
 {
     if (!free_chunk)
     {
         return NULL;
     }
 
-    radix_t* node = free_chunk;
+    intree_t* node = free_chunk;
     free_chunk = free_chunk->right;
     return node;
 }

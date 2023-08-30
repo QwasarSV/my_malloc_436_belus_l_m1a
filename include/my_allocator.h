@@ -22,7 +22,7 @@ struct mem_handler_s
 	size_t    	cursor;
 	size_t    	size_page;
 	void*     	memory;
-	radix_t*  	search_tree;
+	intree_t*  	search_tree;
 	bitlist_t*  head;
 };
 
